@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseraDotNet.Core", "CourseraDotNet.Core\CourseraDotNet.Core.csproj", "{CBD319D6-77CE-4103-AC69-E7288D923A7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseraDotNet.Desktop", "CourseraDotNet.Desktop\CourseraDotNet.Desktop.csproj", "{C0E7FBEC-A7A7-41CE-981A-80F02B9FABC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseraDotNet.Phone", "CourseraDotNet.Phone\CourseraDotNet.Phone.csproj", "{2213F3ED-E9DA-41B4-A04E-4D44F379881E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBD319D6-77CE-4103-AC69-E7288D923A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBD319D6-77CE-4103-AC69-E7288D923A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBD319D6-77CE-4103-AC69-E7288D923A7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBD319D6-77CE-4103-AC69-E7288D923A7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0E7FBEC-A7A7-41CE-981A-80F02B9FABC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0E7FBEC-A7A7-41CE-981A-80F02B9FABC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0E7FBEC-A7A7-41CE-981A-80F02B9FABC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0E7FBEC-A7A7-41CE-981A-80F02B9FABC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2213F3ED-E9DA-41B4-A04E-4D44F379881E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2213F3ED-E9DA-41B4-A04E-4D44F379881E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2213F3ED-E9DA-41B4-A04E-4D44F379881E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2213F3ED-E9DA-41B4-A04E-4D44F379881E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
