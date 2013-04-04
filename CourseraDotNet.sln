@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseraDotNet.Desktop", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseraDotNet.Phone", "CourseraDotNet.Phone\CourseraDotNet.Phone.csproj", "{2213F3ED-E9DA-41B4-A04E-4D44F379881E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseraDotNet.Android", "CourseraDotNet.Android\CourseraDotNet.Android.csproj", "{EFD820C5-A9F4-490E-AAA4-245246C67ABF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{2213F3ED-E9DA-41B4-A04E-4D44F379881E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2213F3ED-E9DA-41B4-A04E-4D44F379881E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2213F3ED-E9DA-41B4-A04E-4D44F379881E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFD820C5-A9F4-490E-AAA4-245246C67ABF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD820C5-A9F4-490E-AAA4-245246C67ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD820C5-A9F4-490E-AAA4-245246C67ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD820C5-A9F4-490E-AAA4-245246C67ABF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

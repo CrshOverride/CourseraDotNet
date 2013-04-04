@@ -18,7 +18,7 @@ namespace CourseraDotNet.Core.Models
         public int? StartMonth { get; set; }
 
         [JsonProperty(PropertyName = "start_year")]
-        public int StartYear { get; set; }
+        public int? StartYear { get; set; }
 
         [JsonProperty(PropertyName = "status")]
         public bool IsNotCompleted { get; set; }
@@ -29,11 +29,19 @@ namespace CourseraDotNet.Core.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        public bool IsSelfPaced
+        {
+            get
+            {
+                return StartDay == null && StartMonth == null && StartYear == null;
+            }
+        }
+
         public DateTime StartDate
         {
             get
             {
-                return new DateTime(StartYear, StartMonth ?? 1, StartDay ?? 1);
+                return new DateTime(StartYear ?? 1, StartMonth ?? 1, StartDay ?? 1);
             }
         }
 
@@ -42,7 +50,7 @@ namespace CourseraDotNet.Core.Models
             get
             {
                 if (!IsNotCompleted) return CourseStatus.Completed;
-                if (StartDate > DateTime.Now) return CourseStatus.Pending;
+                if (IsSelfPaced || StartDate > DateTime.Now) return CourseStatus.Pending;
                 return CourseStatus.Active;
             }
         }
