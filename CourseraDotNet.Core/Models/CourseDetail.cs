@@ -50,7 +50,7 @@ namespace CourseraDotNet.Core.Models
             get
             {
                 if (!IsNotCompleted) return CourseStatus.Completed;
-                if (IsSelfPaced || StartDate > DateTime.Now) return CourseStatus.Pending;
+                if (!IsSelfPaced && StartDate > DateTime.Now) return CourseStatus.Pending;
                 return CourseStatus.Active;
             }
         }
