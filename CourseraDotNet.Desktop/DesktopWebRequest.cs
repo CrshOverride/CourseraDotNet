@@ -18,24 +18,24 @@ namespace CourseraDotNet.Desktop
             _request = request;
         }
 
-        public IAsyncResult BeginGetRequestStream(AsyncCallback callback, object asyncState)
+        public Task<Stream> GetRequestStreamAsync()
         {
-            return _request.BeginGetRequestStream(callback, asyncState);
+            return Task<Stream>.Factory.FromAsync(_request.BeginGetRequestStream, _request.EndGetRequestStream, _request);
         }
 
-        public Stream EndGetRequestStream(IAsyncResult result)
+        public async Task SetContentAsync(string content)
         {
-            return _request.EndGetRequestStream(result);
+            using (var stream = await Task<Stream>.Factory.FromAsync(_request.BeginGetRequestStream, _request.EndGetRequestStream, _request).ConfigureAwait(false))
+            {
+                var bytes = content.ToAscii();
+                stream.Write(bytes, 0, bytes.Length);
+            }
         }
 
-        public IAsyncResult BeginGetResponse(AsyncCallback callback, object asyncState)
+        public async Task<IWebResponse> GetResponseAsync()
         {
-            return _request.BeginGetResponse(callback, asyncState);
-        }
-
-        public IWebResponse EndGetResponse(IAsyncResult result)
-        {
-            return new DesktopWebResponse(_request.EndGetResponse(result));
+            var response = await Task<WebResponse>.Factory.FromAsync(_request.BeginGetResponse, _request.EndGetResponse, _request);
+            return new DesktopWebResponse(response);
         }
 
         public Uri RequestUri
@@ -55,10 +55,9 @@ namespace CourseraDotNet.Desktop
             set { _request.Method = value; }
         }
 
-        public bool AllowAutoRedirect
+        public void Dispose()
         {
-            get { return _request.AllowAutoRedirect; }
-            set { _request.AllowAutoRedirect = value; }
+            
         }
     }
 }

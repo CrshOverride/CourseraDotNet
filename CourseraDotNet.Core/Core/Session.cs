@@ -33,31 +33,28 @@ namespace CourseraDotNet.Core.Core
             var session = new Session(requestBuilder);
             var csrfToken = ConstructCsrfToken();
             var data = string.Format("email_address={0}&password={1}", Uri.EscapeDataString(email), Uri.EscapeDataString(password));
-            var bytes = StringToAscii(data);
             var headers = CommonHeaders();
             headers.Add("Origin", "https://www.coursera.org");
             headers.Add("X-CSRFToken", csrfToken);
             headers.Add("Host", "www.coursera.org");
             headers.Add("Referer", "https://www.coursera.org/account/signin");
 
-            var request = requestBuilder.Build(urlLogin, headers, session.CookieJar);
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.Method = "POST";
-            session.CookieJar.Add(request.RequestUri, new Cookie("csrftoken", csrfToken));
-
-            var getRequestStreamAsync = Task<Stream>.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, request).ConfigureAwait(false);
-            using (var stream = await getRequestStreamAsync)
+            using (var request = requestBuilder.Build(urlLogin, headers, session.CookieJar))
             {
-                stream.Write(bytes, 0, bytes.Length);
-            }
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.Method = "POST";
+                session.CookieJar.Add(request.RequestUri, new Cookie("csrftoken", csrfToken));
 
-            var getResponseStreamAsync = Task<IWebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).ConfigureAwait(false);
-            var response = await getResponseStreamAsync;
-            
-            using (var sr = new StreamReader(response.GetResponseStream()))
-            {
-                var userJson = sr.ReadToEnd();
-                session._user = JsonConvert.DeserializeObject<User>(userJson);
+                await request.SetContentAsync(data);
+
+                using (var response = await request.GetResponseAsync().ConfigureAwait(false))
+                {
+                    using (var sr = new StreamReader(await response.GetResponseStreamAsync()))
+                    {
+                        var userJson = sr.ReadToEnd();
+                        session._user = JsonConvert.DeserializeObject<User>(userJson);
+                    }
+                }
             }
 
             return session;
@@ -67,28 +64,30 @@ namespace CourseraDotNet.Core.Core
         {
             var responseText = "";
 
-            var request = RequestBuilder.Build(url, CommonHeaders(referrer), CookieJar);
-            request.Method = verb.ToVerbString();
-
-            var getResponseAsync = Task<IWebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
-            var response = await getResponseAsync.ConfigureAwait(false);
-
-            using (var stream = response.GetResponseStream())
+            using (var request = RequestBuilder.Build(url, CommonHeaders(referrer), CookieJar))
             {
-                using (var sr = new StreamReader(stream))
+                request.Method = verb.ToVerbString();
+
+                using (var response = await request.GetResponseAsync().ConfigureAwait(false))
                 {
-                    responseText = sr.ReadToEnd();
+                    using (var stream = await response.GetResponseStreamAsync())
+                    {
+                        using (var sr = new StreamReader(stream))
+                        {
+                            responseText = sr.ReadToEnd();
+                        }
+                    }
+
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(responseText);
+
+                    var scripts = doc.DocumentNode.Descendants("script");
+                    foreach (var s in scripts.Where(s => s.InnerText.Contains("top.location")))
+                    {
+                        var newUrl = s.InnerText.Split('=')[1].Trim().Trim(new[] {' ', ';', '"'});
+                        return await GetPageAsync(newUrl, verb).ConfigureAwait(false);
+                    }
                 }
-            }
-
-            var doc = new HtmlDocument();
-            doc.LoadHtml(responseText);
-
-            var scripts = doc.DocumentNode.Descendants("script");
-            foreach (var s in scripts.Where(s => s.InnerText.Contains("top.location")))
-            {
-                var newUrl = s.InnerText.Split('=')[1].Trim().Trim(new[] { ' ', ';', '"' });
-                return await GetPageAsync(newUrl, verb).ConfigureAwait(false);
             }
 
             return responseText;
@@ -96,25 +95,28 @@ namespace CourseraDotNet.Core.Core
 
         public async Task<Stream> GetVideoAsync(string url, HttpVerb verb)
         {
-            var request = RequestBuilder.Build(url, CommonHeaders(), CookieJar);
-            request.Method = verb.ToVerbString();
+            using (var request = RequestBuilder.Build(url, CommonHeaders(), CookieJar))
+            {
+                request.Method = verb.ToVerbString();
 
-            var getResponseAsync = Task<IWebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).ConfigureAwait(false);
-            var response = await getResponseAsync;
-
-            return response.GetResponseStream();
+                using (var response = await request.GetResponseAsync().ConfigureAwait(false))
+                {
+                    return await response.GetResponseStreamAsync();
+                }
+            }
         }
 
         public async Task<string> UnprotectedProtectedAsssetUrl(string url, HttpVerb verb)
         {
-            var request = RequestBuilder.Build(url, CommonHeaders(), CookieJar);
-            request.AllowAutoRedirect = false;
-            request.Method = verb.ToVerbString();
+            using (var request = RequestBuilder.Build(url, CommonHeaders(), CookieJar, false))
+            {
+                request.Method = verb.ToVerbString();
 
-            var getResponseAsync = Task<IWebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).ConfigureAwait(false);
-            var response = await getResponseAsync;
-
-            return response.Headers["Location"];
+                using (var response = await request.GetResponseAsync().ConfigureAwait(false))
+                {
+                    return response.Headers["Location"].First();
+                }
+            }
         }
 
         private static string ConstructCsrfToken()
@@ -127,18 +129,6 @@ namespace CourseraDotNet.Core.Core
                 sb.Append(chars[random.Next(chars.Length)]);
             }
             return sb.ToString();
-        }
-
-        private static byte[] StringToAscii(string s)
-        {
-            var retval = new byte[s.Length];
-            for (var ix = 0; ix < s.Length; ++ix)
-            {
-                var ch = s[ix];
-                if (ch <= 0x7f) retval[ix] = (byte)ch;
-                else retval[ix] = (byte)'?';
-            }
-            return retval;
         }
 
         private static Dictionary<string, string> CommonHeaders(string referrer = null)

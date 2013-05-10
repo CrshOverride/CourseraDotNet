@@ -16,9 +16,12 @@ namespace CourseraDotNet.Desktop
     {
         private readonly WebResponse _response;
 
-        public WebHeaderCollection Headers
+        public IDictionary<string, IEnumerable<string>> Headers
         {
-            get { return _response.Headers; }
+            get
+            {
+                return _response.Headers.AllKeys.ToDictionary(k => k, k => (new List<string> { _response.Headers[k] }) as IEnumerable<string>); 
+            }
         }
 
         public DesktopWebResponse(WebResponse response)
@@ -26,9 +29,14 @@ namespace CourseraDotNet.Desktop
             _response = response;
         }
 
-        public Stream GetResponseStream()
+        public Task<Stream> GetResponseStreamAsync()
         {
-            return _response.GetResponseStream();
+            return Task<Stream>.Factory.StartNew(() => _response.GetResponseStream());
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

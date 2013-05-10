@@ -16,10 +16,11 @@ namespace CourseraDotNet.Phone
 {
     public class PhoneRequestBuilder : IWebRequestBuilder
     {
-        public IWebRequest Build(string url, IEnumerable<KeyValuePair<string, string>> headers, CookieContainer cookieContainer)
+        public IWebRequest Build(string url, IEnumerable<KeyValuePair<string, string>> headers, CookieContainer cookieContainer, bool allowAutoRedirect = true)
         {
             var request = WebRequestCreator.ClientHttp.Create(new Uri(url));
             var httpRequest = request as HttpWebRequest;
+            httpRequest.AllowAutoRedirect = allowAutoRedirect;
             httpRequest.CookieContainer = cookieContainer;
             foreach (var kvp in headers)
             {

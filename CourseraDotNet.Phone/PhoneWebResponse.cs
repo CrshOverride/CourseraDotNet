@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using CourseraDotNet.Core.Core;
 
 namespace CourseraDotNet.Phone
@@ -13,9 +14,12 @@ namespace CourseraDotNet.Phone
     {
         private readonly WebResponse _response;
 
-        public WebHeaderCollection Headers
+        public IDictionary<string, IEnumerable<string>> Headers
         {
-            get { return _response.Headers; }
+            get
+            {
+                return _response.Headers.AllKeys.ToDictionary(k => k, k => (new List<string> { _response.Headers[k] }) as IEnumerable<string>);
+            }
         }
 
         public PhoneWebResponse(WebResponse response)
@@ -23,9 +27,14 @@ namespace CourseraDotNet.Phone
             _response = response;
         }
 
-        public Stream GetResponseStream()
+        public Task<Stream> GetResponseStreamAsync()
         {
-            return _response.GetResponseStream();
+            return Task<Stream>.Factory.StartNew(() => _response.GetResponseStream());
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

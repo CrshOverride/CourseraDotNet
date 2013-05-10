@@ -8,17 +8,13 @@ using System.Threading.Tasks;
 
 namespace CourseraDotNet.Core.Core
 {
-    public interface IWebRequest
+    public interface IWebRequest : IDisposable
     {
-        IAsyncResult BeginGetRequestStream(AsyncCallback callback, object asyncState);
-        Stream EndGetRequestStream(IAsyncResult result);
-
-        IAsyncResult BeginGetResponse(AsyncCallback callback, object asyncState);
-        IWebResponse EndGetResponse(IAsyncResult result);
+        Task SetContentAsync(string content);
+        Task<IWebResponse> GetResponseAsync();
 
         Uri RequestUri { get; }
         string ContentType { get; set; }
         string Method { get; set; }
-        bool AllowAutoRedirect { get; set; }
     }
 }

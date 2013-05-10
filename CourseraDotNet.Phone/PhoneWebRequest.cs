@@ -18,24 +18,19 @@ namespace CourseraDotNet.Phone
             _request = request;
         }
 
-        public IAsyncResult BeginGetRequestStream(AsyncCallback callback, object asyncState)
+        public async Task SetContentAsync(string content)
         {
-            return _request.BeginGetRequestStream(callback, asyncState);
+            using (var stream = await Task<Stream>.Factory.FromAsync(_request.BeginGetRequestStream, _request.EndGetRequestStream, _request).ConfigureAwait(false))
+            {
+                var bytes = content.ToAscii();
+                stream.Write(bytes, 0, bytes.Length);
+            }
         }
 
-        public Stream EndGetRequestStream(IAsyncResult result)
+        public async Task<IWebResponse> GetResponseAsync()
         {
-            return _request.EndGetRequestStream(result);
-        }
-
-        public IAsyncResult BeginGetResponse(AsyncCallback callback, object asyncState)
-        {
-            return _request.BeginGetResponse(callback, asyncState);
-        }
-
-        public IWebResponse EndGetResponse(IAsyncResult result)
-        {
-            return new PhoneWebResponse(_request.EndGetResponse(result));
+            var response = await Task<WebResponse>.Factory.FromAsync(_request.BeginGetResponse, _request.EndGetResponse, _request);
+            return new PhoneWebResponse(response);
         }
 
         public Uri RequestUri
@@ -55,10 +50,9 @@ namespace CourseraDotNet.Phone
             set { _request.Method = value; }
         }
 
-        public bool AllowAutoRedirect
+        public void Dispose()
         {
-            get { return _request.AllowAutoRedirect; }
-            set { _request.AllowAutoRedirect = value; }
+            
         }
     }
 }

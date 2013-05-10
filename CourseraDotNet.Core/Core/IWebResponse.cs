@@ -4,12 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CourseraDotNet.Core.Core
 {
-    public interface IWebResponse
+    public interface IWebResponse : IDisposable
     {
-        WebHeaderCollection Headers { get; }
-        Stream GetResponseStream();
+        IDictionary<string, IEnumerable<string>> Headers { get; }
+        Task<Stream> GetResponseStreamAsync();
     }
 }

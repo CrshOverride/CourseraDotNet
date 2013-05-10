@@ -8,6 +8,6 @@ namespace CourseraDotNet.Core.Core
 {
     public interface IWebRequestBuilder
     {
-        IWebRequest Build(string url, IEnumerable<KeyValuePair<string, string>> headers, CookieContainer cookieContainer);
+        IWebRequest Build(string url, IEnumerable<KeyValuePair<string, string>> headers, CookieContainer cookieContainer, bool allowAutoRedirect = true);
     }
 }
