@@ -29,6 +29,9 @@ namespace CourseraDotNet.Core.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [JsonProperty(PropertyName = "active")]
+        public bool IsActive { get; set; }
+
         public bool IsSelfPaced
         {
             get

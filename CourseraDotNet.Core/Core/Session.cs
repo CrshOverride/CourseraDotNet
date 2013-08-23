@@ -29,15 +29,16 @@ namespace CourseraDotNet.Core.Core
 
         public static async Task<Session> LoginAsync(string email, string password, IWebRequestBuilder requestBuilder)
         {
-            const string urlLogin = "https://www.coursera.org/maestro/api/user/login";
+            const string urlLogin = "https://accounts.coursera.org/api/v1/login";
+
             var session = new Session(requestBuilder);
             var csrfToken = ConstructCsrfToken();
-            var data = string.Format("email_address={0}&password={1}", Uri.EscapeDataString(email), Uri.EscapeDataString(password));
+            var data = string.Format("email={0}&password={1}", Uri.EscapeDataString(email), Uri.EscapeDataString(password));
             var headers = CommonHeaders();
-            headers.Add("Origin", "https://www.coursera.org");
+            headers.Add("Origin", "https://accounts.coursera.org");
             headers.Add("X-CSRFToken", csrfToken);
-            headers.Add("Host", "www.coursera.org");
-            headers.Add("Referer", "https://www.coursera.org/account/signin");
+            headers.Add("Host", "accounts.coursera.org");
+            headers.Add("Referer", "https://accounts.coursera.org/signin");
 
             using (var request = requestBuilder.Build(urlLogin, headers, session.CookieJar))
             {
